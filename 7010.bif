@@ -1,0 +1,5 @@
+the_ROM_image:
+{
+	[bootloader]dummy.elf
+	parallella_7010_headless_gpiose_elink2/parallella_7010_headless_gpiose_elink2.runs/impl_1/elink2_top_wrapper.bit
+}
