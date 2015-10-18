@@ -22,7 +22,7 @@ EOF
 fi
 
 bootgen -w -image 7010.bif -split bin
-mv elink2_top_wrapper.bit.bin parallella.bin.bit
+mv elink2_top_wrapper.bit.bin parallella.bit.bin
 rm 7010.bin
 
 echo "Generated parallelle.bin.bit"
