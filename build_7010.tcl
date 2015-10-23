@@ -2,15 +2,16 @@
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
+set PROJ "p7010_headless"
 
 # Create project
-create_project parallella_7010_headless_gpiose_elink2 ./parallella_7010_headless_gpiose_elink2
+create_project $PROJ ./$PROJ
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
 
 # Set project properties
-set obj [get_projects parallella_7010_headless_gpiose_elink2]
+set obj [get_projects $PROJ]
 set_property "default_lib" "xil_defaultlib" $obj
 set_property "part" "xc7z010clg400-1" $obj
 
@@ -82,7 +83,7 @@ set_property "part" "xc7z010clg400-1" $obj
 # set the current impl run
 current_run -implementation [get_runs impl_1]
 
-puts "INFO: Project created:parallella_7010_headless_gpiose_elink2"
+puts "INFO: Project created:$PROJ"
 
 # Create block design
 source $origin_dir/elink2_top_7010.tcl
