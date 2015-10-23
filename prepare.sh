@@ -25,10 +25,14 @@ cp -a tmp/parallella_7020_headless_gpiose_elink2/parallella_7020_headless_gpiose
 
 echo "Copying ip repo for 7020"
 cp -a tmp/parallella_7020_headless_gpiose_elink2/parallella_7020_headless_gpiose_elink2.ipdefs/* ip_7020/
+echo "Applying patches"
+(cd ip_7020 && patch -p1 < ../patches/bram_fix.patch)
 
 echo "Copying ip repo for 7010"
 cp -a tmp/parallella_7020_headless_gpiose_elink2/parallella_7020_headless_gpiose_elink2.ipdefs/* ip_7010/
-cp version_7010.v ip_7010/elink-gold/version.v
+echo "Applying patches"
+(cd ip_7010 && patch -p1 < ../patches/bram_fix.patch && patch -p1 < ../patches/version.patch)
+
 
 
 echo "Done."

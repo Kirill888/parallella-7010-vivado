@@ -1,0 +1,15 @@
+--- orig.repo/src/ecfg/component.xml
++++ repo/src/ecfg/component.xml
+@@ -234,6 +234,12 @@
+           </spirit:physicalPort>
+         </spirit:portMap>
+       </spirit:portMaps>
++      <spirit:parameters>
++        <spirit:parameter>
++          <spirit:name>MASTER_TYPE</spirit:name>
++          <spirit:value spirit:id="BUSIFPARAM_VALUE.MI.MASTER_TYPE">BRAM_CTRL</spirit:value>
++        </spirit:parameter>
++      </spirit:parameters>
+     </spirit:busInterface>
+   </spirit:busInterfaces>
+   <spirit:model>
