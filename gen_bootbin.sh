@@ -25,5 +25,5 @@ bootgen -w -image 7010.bif -split bin
 mv elink2_top_wrapper.bit.bin parallella.bit.bin
 rm 7010.bin
 
-echo "Generated parallelle.bin.bit"
+echo "Generated parallella.bit.bin"
 echo " Now copy it to SD card and boot your board"
