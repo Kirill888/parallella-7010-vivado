@@ -511,9 +511,8 @@ proc create_root_design { parentCell } {
   set CCLK_N [ create_bd_port -dir O CCLK_N ]
   set CCLK_P [ create_bd_port -dir O CCLK_P ]
   set DSP_RESET_N [ create_bd_port -dir O -from 0 -to 0 DSP_RESET_N ]
-  #this differs on 7010
-  set GPIO_N [ create_bd_port -dir IO -from 23 -to 0 GPIO_N ]
-  set GPIO_P [ create_bd_port -dir IO -from 23 -to 0 GPIO_P ]
+  set GPIO_N [ create_bd_port -dir IO -from 11 -to 0 GPIO_N ]
+  set GPIO_P [ create_bd_port -dir IO -from 11 -to 0 GPIO_P ]
   set I2C_SCL [ create_bd_port -dir IO I2C_SCL ]
   set I2C_SDA [ create_bd_port -dir IO I2C_SDA ]
 
@@ -538,7 +537,7 @@ CONFIG.TRANSLATION_MODE {2} \
   # Create instance: parallella_gpio_emio_0, and set properties
   set parallella_gpio_emio_0 [ create_bd_cell -type ip -vlnv adapteva.com:Adapteva:parallella_gpio_emio:1.0 parallella_gpio_emio_0 ]
   set_property -dict [ list \
-CONFIG.NUM_GPIO_PAIRS {24} \
+CONFIG.NUM_GPIO_PAIRS {12} \
  ] $parallella_gpio_emio_0
 
   # Create instance: parallella_i2c_0, and set properties
