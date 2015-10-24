@@ -37,7 +37,10 @@ if { [get_projects -quiet] eq "" } {
    return 1
 }
 
-
+if { ![info exists NGPIO] } {
+    puts "Defaulting to 24 GPIO pins"
+    set NGPIO 24
+}
 
 # CHANGE DESIGN NAME HERE
 set design_name elink2_top
@@ -474,7 +477,7 @@ levelinfo -pg 1 160 350 800 1210 1580 1970 2170 -top 0 -bot 1240
 
 # Procedure to create entire design; Provide argument to make
 # procedure reusable. If parentCell is "", will use root.
-proc create_root_design { parentCell } {
+proc create_root_design { parentCell n_gpio } {
 
   if { $parentCell eq "" } {
      set parentCell [get_bd_cells /]
@@ -512,8 +515,8 @@ proc create_root_design { parentCell } {
   set CCLK_P [ create_bd_port -dir O CCLK_P ]
   set DSP_RESET_N [ create_bd_port -dir O -from 0 -to 0 DSP_RESET_N ]
   #this differs on 7010
-  set GPIO_N [ create_bd_port -dir IO -from 23 -to 0 GPIO_N ]
-  set GPIO_P [ create_bd_port -dir IO -from 23 -to 0 GPIO_P ]
+  set GPIO_N [ create_bd_port -dir IO -from [expr {$n_gpio - 1}] -to 0 GPIO_N ]
+  set GPIO_P [ create_bd_port -dir IO -from [expr {$n_gpio - 1}] -to 0 GPIO_P ]
   set I2C_SCL [ create_bd_port -dir IO I2C_SCL ]
   set I2C_SDA [ create_bd_port -dir IO I2C_SDA ]
 
@@ -538,7 +541,7 @@ CONFIG.TRANSLATION_MODE {2} \
   # Create instance: parallella_gpio_emio_0, and set properties
   set parallella_gpio_emio_0 [ create_bd_cell -type ip -vlnv adapteva.com:Adapteva:parallella_gpio_emio:1.0 parallella_gpio_emio_0 ]
   set_property -dict [ list \
-CONFIG.NUM_GPIO_PAIRS {24} \
+CONFIG.NUM_GPIO_PAIRS "$n_gpio" \
  ] $parallella_gpio_emio_0
 
   # Create instance: parallella_i2c_0, and set properties
@@ -697,6 +700,6 @@ levelinfo -pg 1 0 190 510 900 1410 1600 -top 0 -bot 740
 # MAIN FLOW
 ##################################################################
 
-create_root_design ""
+create_root_design "" $NGPIO
 
 
