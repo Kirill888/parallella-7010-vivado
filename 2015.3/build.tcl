@@ -7,7 +7,7 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 variable script_file
-set script_file "build_7020.tcl"
+set script_file "build.tcl"
 set mode 7020
 
 # Help information for this script
