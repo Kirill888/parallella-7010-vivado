@@ -7,7 +7,8 @@ if { [info exists ::origin_dir_loc] } {
 }
 
 variable script_file
-set script_file "build_7010.tcl"
+set script_file "build_7020.tcl"
+set mode 7020
 
 # Help information for this script
 proc help {} {
@@ -28,6 +29,8 @@ proc help {} {
   puts "                       origin_dir path value is \".\", otherwise, the value"
   puts "                       that was set with the \"-paths_relative_to\" switch"
   puts "                       when this script was generated.\n"
+  puts " --7010                  Generate project for 7010 model\n"
+  puts " --7020                  Generate project for 7020 model\n"
   puts "\[--help\]               Print help information for this script"
   puts "-------------------------------------------------------------------------\n"
   exit 0
@@ -39,6 +42,8 @@ if { $::argc > 0 } {
     switch -regexp -- $option {
       "--origin_dir" { incr i; set origin_dir [lindex $::argv $i] }
       "--help"       { help }
+      "--7010"       { set mode 7010 }
+      "--7020"       { set mode 7020 }
       default {
         if { [regexp {^-} $option] } {
           puts "ERROR: Unknown option '$option' specified, please type '$script_file -tclargs --help' for usage info.\n"
@@ -49,8 +54,24 @@ if { $::argc > 0 } {
   }
 }
 
-set ELINK_IP "$origin_dir/ip_7010"
-set PROJ "p7010_headless"
+if { $mode == 7020 } {
+    puts "Generating for 7020"
+    set PROJ "p7020_headless"
+    set PART "xc7z020clg400-1"
+    set ELINK_IP "$origin_dir/ip_7020"
+    set NGPIO 24
+    set constraint_files [list parallella_timing.xdc parallella_z70x0_loc.xdc parallella_z7020_loc.xdc]
+} else {
+    puts "Generating for 7010"
+    set PROJ "p7010_headless"
+    set PART "xc7z010clg400-1"
+    set ELINK_IP "$origin_dir/ip_7010"
+    set NGPIO 12
+    set constraint_files [list parallella_timing.xdc parallella_z70x0_loc.xdc]
+}
+    
+
+
 # Create project
 create_project $PROJ ./$PROJ
 
@@ -60,7 +81,7 @@ set proj_dir [get_property directory [current_project]]
 # Set project properties
 set obj [get_projects $PROJ]
 set_property "default_lib" "xil_defaultlib" $obj
-set_property "part" "xc7z010clg400-1" $obj
+set_property "part" "$PART" $obj
 set_property "sim.ip.auto_export_scripts" "1" $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -83,22 +104,15 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 # Set 'constrs_1' fileset object
 set obj [get_filesets constrs_1]
 
-# Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/constraints/parallella_timing.xdc"]"
-set file_added [add_files -norecurse -fileset $obj $file]
-set file "$origin_dir/constraints/parallella_timing.xdc"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
-set_property "file_type" "XDC" $file_obj
-
-# Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/constraints/parallella_z70x0_loc.xdc"]"
-set file_added [add_files -norecurse -fileset $obj $file]
-set file "$origin_dir/constraints/parallella_z70x0_loc.xdc"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
-set_property "file_type" "XDC" $file_obj
-
+foreach cf $constraint_files {
+    # Add/Import constrs file and set constrs file properties
+    set file "[file normalize "$origin_dir/constraints/$cf"]"
+    set file_added [add_files -norecurse -fileset $obj $file]
+    set file "$origin_dir/constraints/$cf"
+    set file [file normalize $file]
+    set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
+    set_property "file_type" "XDC" $file_obj
+}
 
 # Create 'sim_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sim_1] ""]} {
@@ -111,26 +125,26 @@ set obj [get_filesets sim_1]
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
-  create_run -name synth_1 -part xc7z010clg400-1 -flow {Vivado Synthesis 2014} -strategy "Vivado Synthesis Defaults" -constrset constrs_1
+  create_run -name synth_1 -part $PART -flow {Vivado Synthesis 2014} -strategy "Vivado Synthesis Defaults" -constrset constrs_1
 } else {
   set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
   set_property flow "Vivado Synthesis 2014" [get_runs synth_1]
 }
 set obj [get_runs synth_1]
-set_property "part" "xc7z010clg400-1" $obj
+set_property "part" "$PART" $obj
 
 # set the current synth run
 current_run -synthesis [get_runs synth_1]
 
 # Create 'impl_1' run (if not found)
 if {[string equal [get_runs -quiet impl_1] ""]} {
-  create_run -name impl_1 -part xc7z010clg400-1 -flow {Vivado Implementation 2014} -strategy "Vivado Implementation Defaults" -constrset constrs_1 -parent_run synth_1
+  create_run -name impl_1 -part $PART -flow {Vivado Implementation 2014} -strategy "Vivado Implementation Defaults" -constrset constrs_1 -parent_run synth_1
 } else {
   set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
   set_property flow "Vivado Implementation 2014" [get_runs impl_1]
 }
 set obj [get_runs impl_1]
-set_property "part" "xc7z010clg400-1" $obj
+set_property "part" "$PART" $obj
 set_property "steps.write_bitstream.args.readback_file" "0" $obj
 set_property "steps.write_bitstream.args.verbose" "0" $obj
 
@@ -140,7 +154,7 @@ current_run -implementation [get_runs impl_1]
 
 puts "Generating Block Design"
 # Create block design
-source $origin_dir/elink2_top_7010.tcl
+source $origin_dir/elink2_top.tcl
 
 # Generate the wrapper
 set design_name [get_bd_designs]
