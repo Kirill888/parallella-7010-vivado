@@ -36,7 +36,7 @@ all this trouble.
 Build Instructions
 ---------------------
 
-1. Download released Vivado project for 7020 headless into this folder [from github](https://github.com/parallella/parallella-hw/raw/master/fpga/vivado/releases/parallella_7020_headless.xpr.zip) 
+1. Download released Vivado project for 7020 headless into this folder [from github](https://github.com/parallella/parallella-hw/raw/89a0a78cbfe6e48b7cd3879d08dbbbaee76c6a57/fpga/archives/parallella_7020_headless.xpr.zip) 
 2. Run `./prepare.sh`
 3. Run `./gen_project.sh`
 4. Open generated project in Vivado and build bitstream
